@@ -62,11 +62,7 @@ void mq8_read() {
   MQ8.update();
   float correctionFactor = 0;
   float h2ppm = MQ8.readSensor(false, correctionFactor);
-  float rs = MQ8.getRS();
-  float r0 = MQ8.getR0();
-  float ratio = rs / r0;
-  Serial.print("| Sensor Ratio (RS/R0): ");
-  Serial.print(ratio, 2);
-  Serial.print(" | Hydrogen Estimate (ppm): ");
+  // Remove Sensor Ratio output, only print Hydrogen Estimate
+  Serial.print("| Hydrogen Estimate (ppm): ");
   Serial.println(h2ppm, 0);
 }

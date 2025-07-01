@@ -120,11 +120,11 @@ class SensorDashboard(QWidget):
         # Gauges
         self.temp_gauge = AnalogGauge("Temperature", 0, 100, "°C", "#1e90ff")
         self.h2_gauge = AnalogGauge("Hydrogen", 0, 100, "ppm", "#1e90ff")
-        self.ratio_gauge = AnalogGauge("Sensor Ratio", 0, 100, "", "#1e90ff")
+        self.speed_gauge = AnalogGauge("Speed", 0, 200, "km/h", "#1e90ff")
         hbox = QHBoxLayout()
         hbox.addWidget(self.temp_gauge)
         hbox.addWidget(self.h2_gauge)
-        hbox.addWidget(self.ratio_gauge)
+        hbox.addWidget(self.speed_gauge)
         # Top bar for gradient selection
         topbar = QHBoxLayout()
         topbar.addWidget(self.gradient_label)
@@ -154,7 +154,7 @@ class SensorDashboard(QWidget):
         global gauge_gradient
         gauge_gradient = gradients[idx]
         # Update gauge colors to match gradient
-        for gauge, color in zip([self.temp_gauge, self.h2_gauge, self.ratio_gauge], [colors[idx]]*3):
+        for gauge, color in zip([self.temp_gauge, self.h2_gauge, self.speed_gauge], [colors[idx]]*3):
             gauge.color = color
             gauge.title_label.setColor(color)
             gauge.value_label.setColor(color)
@@ -176,12 +176,14 @@ class SensorDashboard(QWidget):
                 if m_temp:
                     temp = m_temp.group(1)
                     self.temp_gauge.set_value(temp)
-                m_h2 = re.match(r"\| Sensor Ratio \(RS/R0\): ([\d.]+) \| Hydrogen Estimate \(ppm\): (\d+)", line)
+                m_h2 = re.match(r"\| Hydrogen Estimate \(ppm\): (\d+)", line)
                 if m_h2:
-                    ratio = m_h2.group(1)
-                    h2ppm = m_h2.group(2)
-                    self.ratio_gauge.set_value(ratio)
+                    h2ppm = m_h2.group(1)
                     self.h2_gauge.set_value(h2ppm)
+                m_speed = re.match(r"(\d+) km/h", line)
+                if m_speed:
+                    speed = m_speed.group(1)
+                    self.speed_gauge.set_value(speed)
             except Exception as e:
                 self.temp_gauge.value_label.setText(f"Read error: {e}")
 
